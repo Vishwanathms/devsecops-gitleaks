@@ -4,13 +4,29 @@ pipeline {
     }
 
     environment {
-        AWS_SECRET_ACCESS_KEY = "AKIA1234567890FAKEKEYEXAMPLE"
+        VAULT_ADDR = 'http://34.228.140.38:8400/'
     }
 
     stages {
         stage('Checkout') {
             steps {
                 checkout scm
+            }
+        }
+        stage('Fetch Secret from Vault') {
+            steps {
+                script {
+                    withVault([vaultSecrets: [
+                        [path: 'secret/app_secret', secretValues: [
+                            [envVar: 'API_KEY', vaultKey: 'app1']
+                        ]]
+                    ]]) {
+                        sh '''
+                            echo "Using secret in Python app"
+                            python3 app.py
+                        '''
+                    }
+                }
             }
         }
         stage('GitLeaks Scan') {
@@ -26,7 +42,7 @@ pipeline {
                         sudo mv gitleaks /usr/local/bin/
                     fi
                     
-                    # Run gitleaks detect
+                    # Run gitleaks detect even if from non commited codes
                     gitleaks detect --source . --no-git --verbose --report-path gitleaks-report.json || exit_code=$?
                     if [ "$exit_code" -eq 1 ]; then
                         echo "Gitleaks found secrets. Check gitleaks-report.json for details"
