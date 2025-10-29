@@ -2,9 +2,9 @@ pipeline {
     agent {
         label 'vish-security-agent'
     }
-    triggers {
-        pollSCM('H/1 * * * *') // checks every 3 mins, or
-        // OR use GitHub webhook instead (recommended)
+
+    environment {
+        AWS_SECRET_ACCESS_KEY = "AKIA1234567890FAKEKEYEXAMPLE"
     }
 
     stages {
