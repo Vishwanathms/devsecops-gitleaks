@@ -119,8 +119,8 @@ pipeline {
                     echo '❌ Build failed due to critical ZAP findings.'
                 }
             }
+        }
     }
-
     post {
         success {
             echo 'Pipeline completed successfully!'
