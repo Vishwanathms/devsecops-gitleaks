@@ -20,17 +20,21 @@ pipeline {
                         [path: 'secret/app_secret', secretValues: [[envVar: 'APP1', vaultKey: 'app1']
                         ]]
                     ]]) {
-                        sh '''
-                    echo "Setting up Python environment..."
-                    python3 -m venv venv
-                    source venv/bin/activate
-                    pip install --upgrade pip
-                    pip install flask
+                    //     sh '''
+                    // echo "Setting up Python environment..."
+                    // python3 -m venv venv
+                    // source venv/bin/activate
+                    // pip install --upgrade pip
+                    // pip install flask
                     
-                    echo "Using secret in Python app"
-                    export API_KEY=$APP1
-                    python3 python_app/app.py
-                        '''
+                    // echo "Using secret in Python app"
+                    // export API_KEY=$APP1
+                    // python3 python_app/app.py
+                    //     '''
+                    sh '''
+                    docker build -t flask-vault-app python_app/
+                    docker run -d -p 8005:5000 -e API_KEY=$APP1 flask-vault-app
+                    '''
                     }
                 }
             }
