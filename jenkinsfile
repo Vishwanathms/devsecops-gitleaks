@@ -70,7 +70,7 @@ pipeline {
  
             steps {
                 script {
-                    sh '''
+                    sh '''#!/bin/bash
                         set -euxo pipefail
 
                         # ====== Wait for app to come online ======
