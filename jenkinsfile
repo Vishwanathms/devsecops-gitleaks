@@ -33,11 +33,12 @@ pipeline {
                     # Run gitleaks detect even if from non commited codes
 
 
-                    if ! gitleaks detect --source . --no-git --verbose --report-path gitleaks-report.json; then
-                        result=$?
-                    fi
+                    echo "🔍 Running Gitleaks scan..."
+                    set +e  # temporarily disable fail-fast
+                    gitleaks detect --source . --no-git --verbose --report-path gitleaks-report.json
+                    result=$?  # capture exit status
+                    set -e  # re-enable fail-fast
 
-                    set -e
                 if [ "$result" -ne 0 ]; then
                     echo "❌ Gitleaks found leaks (exit code $result)"
                     exit 1
