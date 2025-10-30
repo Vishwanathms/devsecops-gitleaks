@@ -21,6 +21,7 @@ pipeline {
         stage('GitLeaks Scan') {
             steps {
                 sh '''#!/bin/bash
+                    rm -rfv /home/ubuntu/jenkins/workspace/vish-gitleak@tmp
                     set -eux
                     # Install gitleaks if not present
                     if ! command -v gitleaks &> /dev/null; then
