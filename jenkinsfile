@@ -35,7 +35,7 @@ pipeline {
 
                     echo "🔍 Running Gitleaks scan..."
                     set +e  # temporarily disable fail-fast
-                    gitleaks detect --source python_app --verbose --report-path gitleaks-report.json 
+                    gitleaks detect --source python_app --no-git --verbose --report-path gitleaks-report.json 
                     result=$?  # capture exit status
                     set -e  # re-enable fail-fast
 
