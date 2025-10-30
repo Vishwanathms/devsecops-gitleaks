@@ -30,12 +30,16 @@ pipeline {
                         chmod +x gitleaks
                         sudo mv gitleaks /usr/local/bin/
                     fi
-                    
                     # Run gitleaks detect even if from non commited codes
-                    gitleaks detect --source . --no-git --verbose --report-path gitleaks-report.json || result=$?
+
+                    exit_code=0
+                    if ! gitleaks detect --source . --no-git --verbose --report-path gitleaks-report.json; then
+                        exit_code=$?
+                    fi
+
                     set -e
-                if [ "$result" -ne 0 ]; then
-                    echo "❌ Gitleaks found leaks (exit code $result)"
+                if [ "$exit_code" -ne 0 ]; then
+                    echo "❌ Gitleaks found leaks (exit code $exit_code)"
                     exit 1
                 else
                     echo "✅ No leaks found."
@@ -50,20 +54,12 @@ pipeline {
                         [path: 'secret/app_secret', secretValues: [[envVar: 'APP1', vaultKey: 'app1']
                         ]]
                     ]]) {
-                    //     sh '''
-                    // echo "Setting up Python environment..."
-                    // python3 -m venv venv
-                    // source venv/bin/activate
-                    // pip install --upgrade pip
-                    // pip install flask
-                    
-                    // echo "Using secret in Python app"
-                    // export API_KEY=$APP1
-                    // python3 python_app/app.py
-                    //     '''
+
                     sh '''
-                    docker build -t flask-vault-app .
-                    docker run -d -p 8005:5000 -e API_KEY=$APP1 flask-vault-app
+                    docker rm -f py-app || true
+                    docker rmi -f flask-vault-app:latest || true
+                    docker build -t flask-vault-app:latest .
+                    docker run -d -p 8005:5000 -e API_KEY=$APP1 --name py-app flask-vault-app:latest
                     '''
                     }
                 }
