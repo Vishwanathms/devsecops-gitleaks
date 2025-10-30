@@ -17,8 +17,8 @@ pipeline {
             steps {
                 script {
                     withVault([vaultSecrets: [
-                        [path: 'secret/app_secret', secretValues: [
-                            [envVar: 'API_KEY', vaultKey: 'app1']
+                        [path: '/v1/secret/data/app_secret', secretValues: [
+                            [envVar: 'app1', vaultKey: 'API_KEY']
                         ]]
                     ]]) {
                         sh '''
