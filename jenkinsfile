@@ -32,7 +32,7 @@ pipeline {
                     // python3 python_app/app.py
                     //     '''
                     sh '''
-                    docker build -t flask-vault-app python_app/
+                    docker build -t flask-vault-app .
                     docker run -d -p 8005:5000 -e API_KEY=$APP1 flask-vault-app
                     '''
                     }
