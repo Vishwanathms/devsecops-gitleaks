@@ -21,8 +21,15 @@ pipeline {
                         ]]
                     ]]) {
                         sh '''
-                            echo "Using secret in Python app"
-                            python3 python_app/app.py
+                    echo "Setting up Python environment..."
+                    python3 -m venv venv
+                    source venv/bin/activate
+                    pip install --upgrade pip
+                    pip install flask
+                    
+                    echo "Using secret in Python app"
+                    export API_KEY=$APP1
+                    python3 python_app/app.py
                         '''
                     }
                 }
